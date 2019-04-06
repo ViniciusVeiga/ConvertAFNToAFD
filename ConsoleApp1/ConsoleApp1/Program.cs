@@ -20,6 +20,8 @@ namespace AFNToAFD
         static void Main(string[] args)
         {
             Convert();
+
+            Console.ReadKey();
         }
 
         public static void Convert()
@@ -42,9 +44,25 @@ namespace AFNToAFD
             Qs = GetQs(afn);
             Alphabets = GetAphabets(afn);
             TableTransition = CreateTableTransition(afn);
-            ShowTable();
             AFeToAFD();
+            Show();
         }
+
+        #region Show
+
+        public static void Show()
+        {
+            Console.WriteLine("AFD:");
+            foreach (var status in State)
+            {
+                foreach (var column in status.Columns)
+                {
+                    Console.WriteLine($"{status.Name} -{column.Alphabet}-> {column.To}");
+                }
+            }
+        }
+
+        #endregion
 
         #region AFeToAFD
 
@@ -54,19 +72,24 @@ namespace AFNToAFD
 
             for (int i = 0; i < State.Count; i++)
             {
-                foreach (var a in Alphabets)
+                foreach (var a in Alphabets.Where(e => e != Empty))
                 {
                     var state = DFAedge(State[i], a);
 
-                    State[i].Columns.Add(new ColumnTransition
-                    {
-                        To = state.Name,
-                        Alphabet = a
-                    });
+                    state.CreateName();
 
-                    if (StateName.Add(state.Name))
+                    if (state.Name != null)
                     {
-                        State.Add(state);
+                        State[i].Columns.Add(new ColumnTransition
+                        {
+                            To = state.Name,
+                            Alphabet = a
+                        });
+
+                        if (StateName.Add(state.Name))
+                        {
+                            State.Add(state);
+                        }
                     }
                 }
             }
@@ -77,6 +100,9 @@ namespace AFNToAFD
         public static State DFAedge(State start, char alphabet)
         {
             var state = new State();
+            var names = new HashSet<string>();
+
+            state.Qs = new List<QOrder>();
 
             foreach (var q in start.Qs)
             {
@@ -84,7 +110,13 @@ namespace AFNToAFD
 
                 foreach (var colunm in line.Colunm)
                 {
-                    
+                    if ($"{alphabet}{Empty}".Contains(colunm.Alphabet))
+                    {
+                        if (names.Add(colunm.To))
+                        {
+                            state.Qs.Add(new QOrder { Q = colunm.To });
+                        }
+                    }
                 }
             }
 
@@ -102,7 +134,7 @@ namespace AFNToAFD
             foreach (var q in Qs)
             {
                 var state = new State { Qs = ConcatState(q) };
-                state.CriarNome();
+                state.CreateName();
 
                 if (StateName.Add(state.Name))
                 {
@@ -130,17 +162,6 @@ namespace AFNToAFD
         }
 
         #endregion
-
-        #endregion
-
-        #region TableTransition
-
-        #region ShowTable
-
-        public static void ShowTable()
-        {
-            //mostrar tabela
-        }
 
         #endregion
 
@@ -194,8 +215,6 @@ namespace AFNToAFD
 
             return list;
         }
-
-        #endregion
 
         #endregion
 

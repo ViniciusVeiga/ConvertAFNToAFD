@@ -19,15 +19,18 @@ namespace AFNToAFD
             Columns = new List<ColumnTransition>();
         }
 
-        public void CriarNome()
+        public void CreateName()
         {
-            foreach (var q in Qs.OrderBy(o => o.Order))
+            if (Qs.Count > 0)
             {
-                Name += $"{q.Q},";
-            }
+                foreach (var q in Qs.OrderBy(o => o.Order))
+                {
+                    Name += $"{q.Q},";
+                }
 
-            Name = Name.TrimEnd(',');
-            Name = "{" + Name + "}";
+                Name = Name.TrimEnd(',');
+                Name = "{" + Name + "}";
+            }
         }
     }
 }
