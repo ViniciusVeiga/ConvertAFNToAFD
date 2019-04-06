@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace AFNToAFD
 {
-    class LineTransition
+    class State
     {
-        public List<ColumnTransition> Colunm { get; set; }
-        public string Q { get; set; }
+        public List<QOrder> Qs { get; set; }
     }
 }

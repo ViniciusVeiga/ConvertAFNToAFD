@@ -8,6 +8,9 @@ namespace AFNToAFD
 {
     class Program
     {
+        static char Empty = '&';
+        static List<string> Start = new List<string>();
+        static List<string> Final = new List<string>();
         static HashSet<string> Qs = new HashSet<string>();
         static HashSet<string> Alphabets = new HashSet<string>();
         static List<LineTransition> TableTransition = new List<LineTransition>();
@@ -25,20 +28,61 @@ namespace AFNToAFD
 
             var afn = new List<string>()
             {
-                "q0 -a-> q1",
-                "q0 -a-> q2",
-                "q1 -b-> q0",
-                "q1 -a-> q2",
-                "q1 -b-> q2",
-                "q2 -a-> q2",
-                "q2 -a-> q0"
+                "q0 -a-> q0",
+                "q0 -&-> q1",
+                "q1 -b-> q1",
+                "q1 -&-> q2",
+                "q2 -a-> q2"
             };
+
+            Start.Add("q0");
 
             Qs = GetQs(afn);
             Alphabets = GetAphabets(afn);
             TableTransition = CreateTableTransition(afn);
-
+            ShowTable();
+            AFeToAFD();
         }
+
+        #region AFEToAFD
+
+        public static void AFeToAFD()
+        {
+            var states = Closure();
+        }
+
+        public static List<State> Closure()
+        {
+            var list = new List<State>();
+
+            foreach (var q in Qs)
+            {            
+                ConcatState
+            }
+
+            return list;
+        }
+
+        public static string ConcatState(string start)
+        {
+
+
+
+            return retorno;
+        }
+
+        #endregion
+
+        #region TableTransition
+
+        #region ShowTable
+
+        public static void ShowTable()
+        {
+            //mostrar tabela
+        }
+ 
+        #endregion
 
         #region CreateTableTransition
 
@@ -57,10 +101,34 @@ namespace AFNToAFD
                         sequence.Add(new QOrder { Q = q, Order = path.IndexOf(q) });
                     }
                 }
+                sequence = sequence.OrderBy(o => o.Order).ToList();
 
-                foreach (var o in sequence.OrderBy(o => o.Order))
+                var line = list.Find(t => t.Q == sequence[0].Q);
+
+                if (line != null)
                 {
-                    list.Add(new LineTransition { })
+                    line.Colunm.Add(new ColumnTransition
+                    {
+                        To = sequence[1].Q,
+                        Alphabet = Alphabets.FirstOrDefault(a => path.Contains(a))
+                    });
+                }
+                else
+                {
+                    line = new LineTransition
+                    {
+                        Q = sequence[0].Q,
+                        Colunm = new List<ColumnTransition>()
+                        {
+                            new ColumnTransition
+                            {
+                                To = (sequence.Count == 1) ? sequence[0].Q : sequence[1].Q,
+                                Alphabet = Alphabets.FirstOrDefault(a => path.Contains(a))
+                            }
+                        }
+                    };
+
+                    list.Add(line);
                 }
             }
 
@@ -69,7 +137,9 @@ namespace AFNToAFD
 
         #endregion
 
-        #region Gets
+        #endregion
+
+        #region Get
 
         #region GetAphabets
 
@@ -107,6 +177,7 @@ namespace AFNToAFD
                 for (int i = 0; i < afn.Count; i++)
                 {
                     var variable = afn[i][0];
+                    var copy = afn[i];
 
                     while (afn[i].Contains(variable))
                     {
@@ -129,6 +200,7 @@ namespace AFNToAFD
                         hashset.Add(remove);
                     }
 
+                    afn[i] = copy;
                 }
 
                 return hashset;
