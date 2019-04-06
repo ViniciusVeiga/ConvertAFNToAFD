@@ -8,7 +8,7 @@ namespace AFNToAFD
 {
     public class ColumnTransition
     {
-        public string Alphabet { get; set; }
+        public char Alphabet { get; set; }
         public string To { get; set; }
     }
 }

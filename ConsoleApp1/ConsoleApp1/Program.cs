@@ -12,8 +12,10 @@ namespace AFNToAFD
         static List<string> Start = new List<string>();
         static List<string> Final = new List<string>();
         static HashSet<string> Qs = new HashSet<string>();
-        static HashSet<string> Alphabets = new HashSet<string>();
+        static HashSet<char> Alphabets = new HashSet<char>();
         static List<LineTransition> TableTransition = new List<LineTransition>();
+        static HashSet<string> StateName = new HashSet<string>();
+        static List<State> State = new List<State>();
 
         static void Main(string[] args)
         {
@@ -44,32 +46,90 @@ namespace AFNToAFD
             AFeToAFD();
         }
 
-        #region AFEToAFD
+        #region AFeToAFD
 
         public static void AFeToAFD()
         {
-            var states = Closure();
+            State.AddRange(Closure());
+
+            for (int i = 0; i < State.Count; i++)
+            {
+                foreach (var a in Alphabets)
+                {
+                    var state = DFAedge(State[i], a);
+
+                    State[i].Columns.Add(new ColumnTransition
+                    {
+                        To = state.Name,
+                        Alphabet = a
+                    });
+
+                    if (StateName.Add(state.Name))
+                    {
+                        State.Add(state);
+                    }
+                }
+            }
         }
+
+        #region DFAedge
+
+        public static State DFAedge(State start, char alphabet)
+        {
+            var state = new State();
+
+            foreach (var q in start.Qs)
+            {
+                var line = TableTransition.Find(t => t.Q == q.Q);
+
+                foreach (var colunm in line.Colunm)
+                {
+                    
+                }
+            }
+
+            return state;
+        }
+
+        #endregion
+
+        #region Closure
 
         public static List<State> Closure()
         {
             var list = new List<State>();
 
             foreach (var q in Qs)
-            {            
-                ConcatState
+            {
+                var state = new State { Qs = ConcatState(q) };
+                state.CriarNome();
+
+                if (StateName.Add(state.Name))
+                {
+                    list.Add(state);
+                }
             }
 
             return list;
         }
 
-        public static string ConcatState(string start)
+        public static List<QOrder> ConcatState(string start)
         {
+            var list = new List<QOrder> { new QOrder { Q = start } };
+            var lineStart = TableTransition.Find(t => t.Q == start);
 
+            foreach (var colunm in lineStart.Colunm)
+            {
+                if (colunm.Alphabet == Empty)
+                {
+                    list.AddRange(ConcatState(colunm.To));
+                }
+            }
 
-
-            return retorno;
+            return list;
         }
+
+        #endregion
 
         #endregion
 
@@ -81,7 +141,7 @@ namespace AFNToAFD
         {
             //mostrar tabela
         }
- 
+
         #endregion
 
         #region CreateTableTransition
@@ -98,10 +158,10 @@ namespace AFNToAFD
                 {
                     if (path.Contains(q))
                     {
-                        sequence.Add(new QOrder { Q = q, Order = path.IndexOf(q) });
+                        sequence.Add(new QOrder { Q = q, OrderForSequence = path.IndexOf(q) });
                     }
                 }
-                sequence = sequence.OrderBy(o => o.Order).ToList();
+                sequence = sequence.OrderBy(o => o.OrderForSequence).ToList();
 
                 var line = list.Find(t => t.Q == sequence[0].Q);
 
@@ -143,16 +203,16 @@ namespace AFNToAFD
 
         #region GetAphabets
 
-        public static HashSet<string> GetAphabets(List<string> afn)
+        public static HashSet<char> GetAphabets(List<string> afn)
         {
             try
             {
-                var hashset = new HashSet<string>();
+                var hashset = new HashSet<char>();
 
                 for (int i = 0; i < afn.Count; i++)
                 {
                     var indexOf = afn[i].IndexOf('-');
-                    hashset.Add(afn[i][indexOf + 1].ToString());
+                    hashset.Add(afn[i][indexOf + 1]);
                 }
 
                 return hashset;
