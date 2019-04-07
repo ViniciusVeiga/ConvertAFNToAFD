@@ -16,6 +16,7 @@ namespace AFNToAFD
 
                 convert.StartConvert();
 
+                Console.Write("\nAperte qualquer letra para recomeçar.");
                 Console.ReadKey();
                 Console.Clear();
             }
