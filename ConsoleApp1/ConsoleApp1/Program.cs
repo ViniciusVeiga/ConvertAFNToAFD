@@ -71,6 +71,7 @@ namespace AFNToAFD
                 switch (value)
                 {
                     case "Finalizado":
+                        Limpar();
                         sair = true;
                         break;
 
@@ -86,6 +87,7 @@ namespace AFNToAFD
                         }
                         else
                         {
+                            Limpar();
                             Console.WriteLine("AFe Vazio.");
                         }
                         break;
@@ -100,19 +102,8 @@ namespace AFNToAFD
                             "q2 -a-> q2"
                         };
 
-                        //afn = new List<string>()
-                        //{
-                        //    "q0 -a-> q1",
-                        //    "q1 -b-> q0",
-                        //    "q1 -b-> q2",
-                        //    "q2 -a-> q0",
-                        //};
-
                         Start = "q0";
                         Final.Add("q2");
-
-                        //Start.Add("q0");
-                        //Final.Add("q0");
 
                         sair = true;
                         break;
@@ -133,6 +124,13 @@ namespace AFNToAFD
             }
 
             return afn;
+        }
+
+        public static void Limpar()
+        {
+            Console.SetCursorPosition(0, Console.CursorTop - 1);
+            Console.Write(new string(' ', Console.WindowWidth));
+            Console.SetCursorPosition(0, Console.CursorTop - 1);
         }
 
         #endregion
