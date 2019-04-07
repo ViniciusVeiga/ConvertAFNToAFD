@@ -11,7 +11,7 @@ namespace AFNToAFD
         #region Variables
 
         static char Empty = '&';
-        static List<string> Start = new List<string>();
+        static string Start = string.Empty;
         static List<string> Final = new List<string>();
         static HashSet<string> Qs = new HashSet<string>();
         static HashSet<char> Alphabets = new HashSet<char>();
@@ -83,8 +83,19 @@ namespace AFNToAFD
                             "q2 -a-> q2"
                         };
 
-                        Start.Add("q0");
+                        //afn = new List<string>()
+                        //{
+                        //    "q0 -a-> q1",
+                        //    "q1 -b-> q0",
+                        //    "q1 -b-> q2",
+                        //    "q2 -a-> q0",
+                        //};
+
+                        Start = "q0";
                         Final.Add("q2");
+
+                        //Start.Add("q0");
+                        //Final.Add("q0");
 
                         sair = true;
                         break;
@@ -97,8 +108,8 @@ namespace AFNToAFD
 
             if (value != "Exemplo")
             {
-                Console.WriteLine("\nDigite os iniciais, separados por ,: ");
-                Start = Console.ReadLine().Split(',').ToList();
+                Console.WriteLine("\nDigite o inicial: ");
+                Start = Console.ReadLine();
 
                 Console.WriteLine("\nDigite os iniciais, separados por ,: ");
                 Final = Console.ReadLine().Split(',').ToList();
@@ -113,10 +124,12 @@ namespace AFNToAFD
 
         public static void Show()
         {
+            var start = State.Find(s => s.IsStart == true).Name;
+
             Console.WriteLine("\nAFD:");
             foreach (var status in State)
             {
-                if (Start.Any(n => status.Name.Contains(n)))
+                if (status.Name == start)
                 {
                     status.Name = $"{status.Name} I";
                 }
@@ -128,7 +141,7 @@ namespace AFNToAFD
 
                 foreach (var column in status.Columns)
                 {
-                    if (Start.Any(n => column.To.Contains(n)))
+                    if (column.To == start)
                     {
                         column.To = $"{column.To} I";
                     }
@@ -215,17 +228,15 @@ namespace AFNToAFD
         {
             var list = new List<State>();
 
-            foreach (var q in Qs)
+            var state = new State { Qs = ConcatState(Start) };
+            state.IsStart = true;
+            state.CreateName();
+
+            if (StateName.Add(state.Name))
             {
-                var state = new State { Qs = ConcatState(q) };
-                state.CreateName();
-
-                if (StateName.Add(state.Name))
-                {
-                    list.Add(state);
-                }
+                list.Add(state);
             }
-
+           
             return list;
         }
 

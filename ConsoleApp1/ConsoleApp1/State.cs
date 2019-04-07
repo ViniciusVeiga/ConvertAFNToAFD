@@ -10,7 +10,7 @@ namespace AFNToAFD
     class State
     {
         public string Name { get; set; }
-        public bool? Visited { get; set; }
+        public bool? IsStart { get; set; }
         public List<QOrder> Qs { get; set; }
         public List<ColumnTransition> Columns { get; set; }
 
