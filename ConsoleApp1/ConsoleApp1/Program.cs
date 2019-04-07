@@ -123,14 +123,14 @@ namespace AFNToAFD
 
                 if (Final.Any(n => status.Name.Contains(n)))
                 {
-                    status.Name = $"{status.Name} I";
+                    status.Name = $"{status.Name} F";
                 }
 
                 foreach (var column in status.Columns)
                 {
                     if (Start.Any(n => column.To.Contains(n)))
                     {
-                        column.To = $"{column.To} S";
+                        column.To = $"{column.To} I";
                     }
 
                     if (Final.Any(n => column.To.Contains(n)))
