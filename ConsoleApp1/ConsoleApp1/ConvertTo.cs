@@ -134,7 +134,7 @@ namespace AFNToAFD
         {
             var start = State.Find(s => s.IsStart == true).Name;
 
-            Console.WriteLine("\nAFD:");
+            Console.WriteLine("\nAFD  (S: Start, F: Final):");
             foreach (var status in State)
             {
                 if (status.Name == start)
