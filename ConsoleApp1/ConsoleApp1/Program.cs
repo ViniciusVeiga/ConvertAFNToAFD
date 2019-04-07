@@ -8,6 +8,8 @@ namespace AFNToAFD
 {
     class Program
     {
+        #region Variables
+
         static char Empty = '&';
         static List<string> Start = new List<string>();
         static List<string> Final = new List<string>();
@@ -16,6 +18,8 @@ namespace AFNToAFD
         static List<LineTransition> TableTransition = new List<LineTransition>();
         static HashSet<string> StateName = new HashSet<string>();
         static List<State> State = new List<State>();
+
+        #endregion
 
         static void Main(string[] args)
         {
@@ -26,21 +30,7 @@ namespace AFNToAFD
 
         public static void Convert()
         {
-
-            //Console.WriteLine("Digite: ");
-            //Console.ReadKey();
-
-            var afn = new List<string>()
-            {
-                "q0 -a-> q0",
-                "q0 -&-> q1",
-                "q1 -b-> q1",
-                "q1 -&-> q2",
-                "q2 -a-> q2"
-            };
-
-            Start.Add("q0");
-
+            var afn = Menu();
             Qs = GetQs(afn);
             Alphabets = GetAphabets(afn);
             TableTransition = CreateTableTransition(afn);
@@ -48,15 +38,106 @@ namespace AFNToAFD
             Show();
         }
 
+        #region Menu
+
+        public static List<string> Menu()
+        {
+            var afn = new List<string>();
+            var value = string.Empty;
+
+            Console.WriteLine("Exemplo AFe digitado (S: Start, F: Final): ");
+            Console.WriteLine("q0 -a-> q0");
+            Console.WriteLine("q0 -&-> q1");
+            Console.WriteLine("q1 -b-> q1");
+            Console.WriteLine("q1 -&-> q2");
+            Console.WriteLine("q2 -a-> q2");
+
+            Console.WriteLine("\nIniciais: ");
+            Console.WriteLine("q0");
+
+            Console.WriteLine("\nFinais: ");
+            Console.WriteLine("q2");
+
+            Console.WriteLine("\nDigite 'Finalizado' para sair.");
+            Console.WriteLine("Digite 'Exemplo' para ver o resultado do exemplo.");
+            Console.WriteLine("Digite o AFe: ");
+            var sair = false;
+
+            while (sair == false)
+            {
+                value = Console.ReadLine();
+
+                switch (value)
+                {
+                    case "Finalizado":
+                        sair = true;
+                        break;
+
+                    case "Exemplo":
+                        afn = new List<string>()
+                        {
+                            "q0 -a-> q0",
+                            "q0 -&-> q1",
+                            "q1 -b-> q1",
+                            "q1 -&-> q2",
+                            "q2 -a-> q2"
+                        };
+
+                        Start.Add("q0");
+                        Final.Add("q2");
+
+                        sair = true;
+                        break;
+                    default:
+                        afn.Add(value);
+                        break;
+                }
+
+            }
+
+            if (value != "Exemplo")
+            {
+                Console.WriteLine("\nDigite os iniciais, separados por ,: ");
+                Start = Console.ReadLine().Split(',').ToList();
+
+                Console.WriteLine("\nDigite os iniciais, separados por ,: ");
+                Final = Console.ReadLine().Split(',').ToList();
+            }
+
+            return afn;
+        }
+
+        #endregion
+
         #region Show
 
         public static void Show()
         {
-            Console.WriteLine("AFD:");
+            Console.WriteLine("\nAFD:");
             foreach (var status in State)
             {
+                if (Start.Any(n => status.Name.Contains(n)))
+                {
+                    status.Name = $"{status.Name} I";
+                }
+
+                if (Final.Any(n => status.Name.Contains(n)))
+                {
+                    status.Name = $"{status.Name} I";
+                }
+
                 foreach (var column in status.Columns)
                 {
+                    if (Start.Any(n => column.To.Contains(n)))
+                    {
+                        column.To = $"{column.To} S";
+                    }
+
+                    if (Final.Any(n => column.To.Contains(n)))
+                    {
+                        column.To = $"{column.To} F";
+                    }
+
                     Console.WriteLine($"{status.Name} -{column.Alphabet}-> {column.To}");
                 }
             }
@@ -108,13 +189,16 @@ namespace AFNToAFD
             {
                 var line = TableTransition.Find(t => t.Q == q.Q);
 
-                foreach (var colunm in line.Colunm)
+                if (line != null)
                 {
-                    if ($"{alphabet}{Empty}".Contains(colunm.Alphabet))
+                    foreach (var colunm in line.Colunm)
                     {
-                        if (names.Add(colunm.To))
+                        if ($"{alphabet}{Empty}".Contains(colunm.Alphabet))
                         {
-                            state.Qs.Add(new QOrder { Q = colunm.To });
+                            if (names.Add(colunm.To))
+                            {
+                                state.Qs.Add(new QOrder { Q = colunm.To });
+                            }
                         }
                     }
                 }
@@ -150,11 +234,14 @@ namespace AFNToAFD
             var list = new List<QOrder> { new QOrder { Q = start } };
             var lineStart = TableTransition.Find(t => t.Q == start);
 
-            foreach (var colunm in lineStart.Colunm)
+            if (lineStart != null)
             {
-                if (colunm.Alphabet == Empty)
+                foreach (var colunm in lineStart.Colunm)
                 {
-                    list.AddRange(ConcatState(colunm.To));
+                    if (colunm.Alphabet == Empty)
+                    {
+                        list.AddRange(ConcatState(colunm.To));
+                    }
                 }
             }
 
