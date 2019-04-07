@@ -38,7 +38,7 @@ namespace AFNToAFD
             var afn = new List<string>();
             var value = string.Empty;
 
-            Console.WriteLine("\nExemplo AFe digitado (S: Start, F: Final): ");
+            Console.WriteLine("\nExemplo AFe digitado: ");
             Console.WriteLine("q0 -a-> q0");
             Console.WriteLine("q0 -&-> q1");
             Console.WriteLine("q1 -b-> q1");
@@ -134,7 +134,7 @@ namespace AFNToAFD
         {
             var start = State.Find(s => s.IsStart == true).Name;
 
-            Console.WriteLine("\nAFD  (S: Start, F: Final):");
+            Console.WriteLine("\nAFD  (I: Inicial, F: Final):");
             foreach (var status in State)
             {
                 if (status.Name == start)
