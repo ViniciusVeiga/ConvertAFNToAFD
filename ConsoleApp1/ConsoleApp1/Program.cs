@@ -60,6 +60,7 @@ namespace AFNToAFD
 
             Console.WriteLine("\nDigite 'Finalizado' para sair.");
             Console.WriteLine("Digite 'Exemplo' para ver o resultado do exemplo.");
+            Console.WriteLine("Digite 'Remover' para remover o a ultima linha.");
             Console.WriteLine("Digite o AFe: ");
             var sair = false;
 
@@ -71,6 +72,22 @@ namespace AFNToAFD
                 {
                     case "Finalizado":
                         sair = true;
+                        break;
+
+                    case "Remover":
+                        if (afn.Count > 0)
+                        {
+                            afn.Remove(afn.Last());
+                            Console.SetCursorPosition(0, Console.CursorTop - 1);
+                            Console.Write(new string(' ', Console.WindowWidth));
+                            Console.SetCursorPosition(0, Console.CursorTop - 2);
+                            Console.Write(new string(' ', Console.WindowWidth));
+                            Console.SetCursorPosition(0, Console.CursorTop - 1);
+                        }
+                        else
+                        {
+                            Console.WriteLine("AFe Vazio.");
+                        }
                         break;
 
                     case "Exemplo":
@@ -288,7 +305,7 @@ namespace AFNToAFD
                 {
                     line.Colunm.Add(new ColumnTransition
                     {
-                        To = sequence[1].Q,
+                        To = (sequence.Count == 1) ? sequence[0].Q : sequence[1].Q,
                         Alphabet = Alphabets.FirstOrDefault(a => path.Contains(a))
                     });
                 }
