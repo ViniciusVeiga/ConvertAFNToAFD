@@ -54,7 +54,7 @@ namespace AFNToAFD
             Console.WriteLine("\nQuando finalizar o AFe, digite 'Finalizado' para encerrar.");
             Console.WriteLine("Digite 'Exemplo' para ver o resultado do exemplo.");
             Console.WriteLine("Digite 'Remover' para remover o a ultima linha.");
-            Console.WriteLine("Digite o AFe (Estados: Letra + Numero do estado, exemplo: q0): ");
+            Console.WriteLine("Digite o AFe (Estados: Letra + Numero do estado, exemplo: q0. s0, x0 e etc.): ");
             var sair = false;
 
             while (sair == false)
