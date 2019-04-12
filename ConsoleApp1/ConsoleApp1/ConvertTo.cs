@@ -170,13 +170,14 @@ namespace AFNToAFD
 
         public void AFeToAFD()
         {
-            State.AddRange(Closure());
+            State.Add(Closure());
+            StateName.Add(State[0].Name);
 
             for (int i = 0; i < State.Count; i++)
             {
                 foreach (var a in Alphabets.Where(e => e != Empty))
                 {
-                    var state = DFAedge(State[i], a);
+                    var state = Closure(DFAedge(State[i], a).Qs);
 
                     state.CreateName();
 
@@ -214,7 +215,7 @@ namespace AFNToAFD
                 {
                     foreach (var colunm in line.Colunm)
                     {
-                        if ($"{alphabet}{Empty}".Contains(colunm.Alphabet))
+                        if (alphabet == colunm.Alphabet)
                         {
                             if (names.Add(colunm.To))
                             {
@@ -232,20 +233,29 @@ namespace AFNToAFD
 
         #region Closure
 
-        public List<State> Closure()
+        public State Closure()
         {
-            var list = new List<State>();
+            var state = new State {
+                Qs = ConcatState(Start),
+                IsStart = true
+            };
 
-            var state = new State { Qs = ConcatState(Start) };
-            state.IsStart = true;
             state.CreateName();
 
-            if (StateName.Add(state.Name))
+            return state;
+        }
+
+        public State Closure(List<QOrder> qs)
+        {
+            var state = new State { Qs = new List<QOrder>() };
+            var qState = new HashSet<string>();
+
+            foreach (var q in qs)
             {
-                list.Add(state);
+                state.Qs.AddRange(ConcatState(q.Q).FindAll(c => qState.Add(c.Q)));
             }
 
-            return list;
+            return state;
         }
 
         public List<QOrder> ConcatState(string start)
