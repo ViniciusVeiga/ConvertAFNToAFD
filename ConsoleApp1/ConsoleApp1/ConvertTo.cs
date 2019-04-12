@@ -38,7 +38,7 @@ namespace AFNToAFD
             var afn = new List<string>();
             var value = string.Empty;
 
-            Console.WriteLine("\nExemplo AFe digitado (S: Start, F: Final): ");
+            Console.WriteLine("\nExemplo AFe digitado: ");
             Console.WriteLine("q0 -a-> q0");
             Console.WriteLine("q0 -&-> q1");
             Console.WriteLine("q1 -b-> q1");
@@ -54,7 +54,7 @@ namespace AFNToAFD
             Console.WriteLine("\nQuando finalizar o AFe, digite 'Finalizado' para encerrar.");
             Console.WriteLine("Digite 'Exemplo' para ver o resultado do exemplo.");
             Console.WriteLine("Digite 'Remover' para remover o a ultima linha.");
-            Console.WriteLine("Digite o AFe: ");
+            Console.WriteLine("Digite o AFe (Estados: Letra + Numero do estado, exemplo: q0): ");
             var sair = false;
 
             while (sair == false)
@@ -112,7 +112,7 @@ namespace AFNToAFD
                 Console.WriteLine("\nDigite o inicial: ");
                 Start = Console.ReadLine();
 
-                Console.WriteLine("\nDigite os iniciais, separados por ,: ");
+                Console.WriteLine("\nDigite os finais, separados por ,: ");
                 Final = Console.ReadLine().Split(',').ToList();
             }
 
@@ -134,7 +134,7 @@ namespace AFNToAFD
         {
             var start = State.Find(s => s.IsStart == true).Name;
 
-            Console.WriteLine("\nAFD  (S: Start, F: Final):");
+            Console.WriteLine("\nAFD  (I: Inicial, F: Final):");
             foreach (var status in State)
             {
                 if (status.Name == start)

@@ -21,7 +21,10 @@ namespace AFNToAFD
             }
             set
             {
-                Order = Convert.ToInt32(Regex.Replace(value, "[^0-9]", ""));
+                try
+                {
+                    Order = Convert.ToInt32(Regex.Replace(value, "[^0-9]", ""));
+                } catch (Exception) { }
                 this.q = value;
             }
         }
